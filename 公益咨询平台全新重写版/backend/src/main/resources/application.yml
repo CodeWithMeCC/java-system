@@ -1,0 +1,24 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: public-consult-platform
+  datasource:
+    url: jdbc:mysql://localhost:3306/education_platform?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ${DB_PASSWORD:040908}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-this-secret-to-a-long-random-string-before-production-2026}
+    expiration-hours: 12
+  upload-dir: ./uploads

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.publicconsult.platform.auth.AuthMapper">
+
+  <select id="findByUsername" resultType="map">
+    SELECT
+    u.id,
+    u.username,
+    u.password,
+    u.nickname,
+    u.role,
+    u.status,
+    COALESCE(p.audit_status, '已通过') AS auditStatus
+    FROM sys_user u
+    LEFT JOIN professor_profile p
+    ON p.user_id = u.id
+    WHERE u.username = #{username}
+    LIMIT 1
+  </select>
+
+  <select id="findById" resultType="map">
+    SELECT
+    u.id,
+    u.username,
+    u.password,
+    u.nickname,
+    u.role,
+    u.status,
+    u.avatar,
+    u.phone,
+    u.email,
+    COALESCE(p.audit_status, '已通过') AS auditStatus
+    FROM sys_user u
+    LEFT JOIN professor_profile p
+    ON p.user_id = u.id
+    WHERE u.id = #{id}
+  </select>
+
+  <insert id="insertUser"
+          useGeneratedKeys="true"
+          keyProperty="user.id"
+          keyColumn="id">
+
+    INSERT INTO sys_user (
+    username,
+    password,
+    nickname,
+    role,
+    status,
+    created_at
+    )
+    VALUES (
+    #{user.username},
+    #{user.password},
+    #{user.nickname},
+    #{user.role},
+    #{user.status},
+    NOW()
+    )
+
+  </insert>
+
+  <insert id="insertProfessorProfile">
+    INSERT INTO professor_profile (
+    user_id,
+    real_name,
+    audit_status
+    )
+    VALUES (
+    #{userId},
+    #{realName},
+    '待审核'
+    )
+  </insert>
+
+</mapper>

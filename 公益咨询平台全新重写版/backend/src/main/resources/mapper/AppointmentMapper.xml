@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.publicconsult.platform.appointment.AppointmentMapper">
+ <select id="listForUser" resultType="map">SELECT a.*,p.nickname professorName FROM professor_appointment a JOIN sys_user p ON p.id=a.professor_id WHERE a.user_id=#{userId} ORDER BY a.created_at DESC</select>
+ <select id="listForProfessor" resultType="map">SELECT a.*,u.nickname studentName FROM professor_appointment a JOIN sys_user u ON u.id=a.user_id WHERE a.professor_id=#{professorId} ORDER BY a.created_at DESC</select>
+ <select id="listAll" resultType="map">SELECT a.*,u.nickname studentName,p.nickname professorName FROM professor_appointment a JOIN sys_user u ON u.id=a.user_id JOIN sys_user p ON p.id=a.professor_id ORDER BY a.created_at DESC</select>
+ <insert id="create">INSERT INTO professor_appointment(appointment_no,user_id,professor_id,consultation_type,subject,content,appointment_time,status) SELECT #{appointmentNo},#{userId},u.id,#{type},#{subject},#{content},#{time},'待确认' FROM sys_user u JOIN professor_profile p ON p.user_id=u.id WHERE u.id=#{professorId} AND u.role='PROFESSOR' AND u.status='正常' AND p.audit_status='已通过'</insert>
+ <select id="findById" resultType="map">SELECT id,user_id userId,professor_id professorId,status FROM professor_appointment WHERE id=#{id}</select>
+ <update id="updateStatus">UPDATE professor_appointment SET status=#{status},professor_reply=#{reply},updated_at=NOW() WHERE id=#{id} AND status='待确认' <if test="ownerColumn == 'user_id'">AND user_id=#{ownerId}</if><if test="ownerColumn == 'professor_id'">AND professor_id=#{ownerId}</if></update>
+</mapper>
